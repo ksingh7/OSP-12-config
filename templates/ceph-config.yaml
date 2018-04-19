@@ -1,0 +1,78 @@
+resource_registry:
+  # Just in case we want to redeploy - BE careful in production.
+  OS::TripleO::NodeUserData: /home/stack/templates/wipe-disks.yaml
+
+parameter_defaults:
+  CephAnsibleDisksConfig:
+    osd_scenario: non-collocated
+    devices:
+      - /dev/sdb
+      - /dev/sdc
+      - /dev/sdd
+      - /dev/sde
+      - /dev/sdf
+      - /dev/sdg
+      - /dev/sdh
+      - /dev/sdi
+      - /dev/sdj
+      - /dev/sdk
+      - /dev/sdl
+      - /dev/sdm                              
+    dedicated_devices:
+      - /dev/nvme0n1
+      - /dev/nvme0n1
+      - /dev/nvme0n1
+      - /dev/nvme0n1
+      - /dev/nvme0n1
+      - /dev/nvme0n1
+      - /dev/nvme0n1
+      - /dev/nvme0n1
+      - /dev/nvme0n1
+      - /dev/nvme0n1
+                              
+    journal_size: 10240
+
+  CephPoolDefaultPgNum: 64
+
+  CephAnsibleExtraConfig:
+    osd_pool_default_pg_num: 64 
+    osd_pool_default_pgp_num: 64
+    osd_recovery_max_active: 1
+    osd_max_backfills: 1
+    osd_recovery_op_priority: 1
+    osd_journal_size: 10240
+    mon_osd_full_ratio: 90
+    max_open_files: 131072
+    objecter_inflight_ops: 40960
+    objecter_inflight_op_bytes: 2147483648
+    filestore_queue_max_ops: 500
+    filestore_op_threads: 8
+    filestore_max_sync_interval: 10
+    filestore_wbthrottle_xfs_bytes_start_flusher: 1073741824
+    osd_op_threads: 8
+    osd_enable_op_tracker: False
+
+
+  ControllerExtraConfig:
+    tripleo::firewall::firewall_rules:
+      '300 allow ceph mgrs':
+        port: 6800
+        proto: tcp
+        action: accept
+
+  CephPools:
+    - name: vms
+      pg_num: 1024
+      pgp_num: 1024
+    - name: images
+      pg_num: 512
+      pgp_num: 512
+    - name: volumes
+      pg_num: 1024
+      pgp_num: 1024
+
+  CephAnsiblePlaybookVerbosity: 1
+
+  CephConfigOverrides:
+    mon_osd_full_ratio: 90
+    max_open_files: 131072
